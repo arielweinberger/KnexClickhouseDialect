@@ -5,9 +5,7 @@ const SchemaCompiler = require('knex/lib/schema/compiler');
 class SchemaCompilerClickHouse extends SchemaCompiler {
     // Rename a table on the schema.
     renameTable(tableName, to) {
-        this.pushQuery(
-            `rename table ${this.formatter.wrap(tableName)} to ${this.formatter.wrap(to)}`,
-        );
+        this.pushQuery(`rename table ${this.formatter.wrap(tableName)} to ${this.formatter.wrap(to)}`);
     }
 
     // Check whether a table exists on the query.

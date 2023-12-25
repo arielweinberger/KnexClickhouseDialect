@@ -1,19 +1,17 @@
 // Clickhouse Query Compiler
 // ------
-const QueryCompiler = require('knex/lib/query/querycompiler');
-const _ = require('lodash');
+const QueryCompiler = require("knex/lib/query/querycompiler");
+const _ = require("lodash");
 
 class QueryCompilerClickhouse extends QueryCompiler {
-    _emptyInsertValue = '() values ()';
+    _emptyInsertValue = "() values ()";
 
     constructor(client, builder, bindings) {
         super(client, builder, bindings);
         const { returning } = this.single;
 
         if (returning) {
-            this.client.logger.warn(
-                '.returning() is not supported by Clickhouse and will not have any effect.',
-            );
+            this.client.logger.warn(".returning() is not supported by Clickhouse and will not have any effect.");
         }
     }
 
@@ -22,9 +20,7 @@ class QueryCompilerClickhouse extends QueryCompiler {
         const { tableName } = this;
         const updateData = this._prepUpdate(this.single.update);
         const wheres = this.where();
-        return `ALTER TABLE ${tableName} UPDATE ` +
-            updateData.join(', ') +
-            (wheres ? ` ${wheres}` : '');
+        return `ALTER TABLE ${tableName} UPDATE ` + updateData.join(", ") + (wheres ? ` ${wheres}` : "");
     }
 
     // Compiles a `columnInfo` query.
@@ -37,8 +33,7 @@ class QueryCompilerClickhouse extends QueryCompiler {
         const table = this.client.customWrapIdentifier(this.single.table, _.identity);
 
         return {
-            sql:
-                'select * from information_schema.columns where table_name = ? and table_schema = ?',
+            sql: "select * from information_schema.columns where table_name = ? and table_schema = ?",
             bindings: [table, this.client.database()],
             output(resp) {
                 const out = resp.reduce(function r(columns, val) {
@@ -46,7 +41,7 @@ class QueryCompilerClickhouse extends QueryCompiler {
                         defaultValue: val.COLUMN_DEFAULT,
                         type: val.DATA_TYPE,
                         maxLength: val.CHARACTER_MAXIMUM_LENGTH,
-                        nullable: val.IS_NULLABLE === 'YES',
+                        nullable: val.IS_NULLABLE === "YES",
                     };
                     return columns;
                 }, {});
@@ -58,10 +53,24 @@ class QueryCompilerClickhouse extends QueryCompiler {
     limit() {
         // Workaround for offset only.
         // see: http://stackoverflow.com/questions/255517/mysql-offset-infinite-rows
-        if (this.single.offset && !this.single.limit && this.single.limit !== 0)
-            return 'limit 18446744073709551615';
+        if (this.single.offset && !this.single.limit && this.single.limit !== 0) return "limit 18446744073709551615";
 
         return super.limit();
+    }
+
+    del() {
+        // Make sure tableName is processed by the formatter first.
+        if (this.joins) {
+            throw new Error("Clickhouse does not support delete with join");
+        }
+        const { tableName } = this;
+        const withSQL = this.with();
+        const wheres = this.where();
+        // const joins = this.join();
+        // When using joins, delete the "from" table values as a default
+        // const deleteSelector = joins ? tableName + ' ' : '';
+        const query = withSQL + `ALTER TABLE ${tableName} DELETE ` + (wheres ? ` ${wheres}` : "");
+        return query;
     }
 }
 

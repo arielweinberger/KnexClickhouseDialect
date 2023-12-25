@@ -1,62 +1,60 @@
 // ClickHouse Column Compiler
 // -------
-const ColumnCompiler = require('knex/lib/schema/columncompiler');
-const Raw = require('knex/lib/raw');
+const ColumnCompiler = require("knex/lib/schema/columncompiler");
+const Raw = require("knex/lib/raw");
 
 class ColumnCompilerClickHouse extends ColumnCompiler {
-    modifiers = [
-        'defaultTo',
-    ];
+    modifiers = ["defaultTo"];
 
-    increments = 'UUID default generateUUIDv4()';
+    increments = "UUID DEFAULT UUIDStringToNum('generateUUIDv4()')";
 
-    bigincrements = 'UUID default generateUUIDv4()';
+    bigincrements = "UUID DEFAULT UUIDStringToNum('generateUUIDv4()')";
 
-    smallint = 'Int8';
+    smallint = "Int8";
 
-    mediumint = 'Int16';
+    mediumint = "Int16";
 
-    integer = 'Int32';
+    integer = "Int32";
 
-    bigint = 'Int64';
+    bigint = "Int64";
 
-    text = 'String';
+    text = "String";
 
-    varchar = 'String';
+    varchar = "String";
 
-    datetime = 'datetime';
+    datetime = "DateTime";
 
-    timestamp = 'datetime';
+    timestamp = "DateTime";
 
-    time = 'time';
+    time = "DateTime";
 
     double(precision, scale) {
         return `Decimal32(${this._num(precision, 8)}, ${this._num(scale, 2)})`;
     }
 
-    enu(allowed) {
+    enum(allowed) {
         // todo
         // let enumData = [];
         // allowed.forEach((v, k) => {
         //     enumData += '';
         // });
-        return `enum('${allowed.join('\', \'')}')`;
+        return `enum('${allowed.join("', '")}')`;
     }
 
     bit(length) {
-        return length ? `bit(${this._num(length)})` : 'bit';
+        return length ? `bit(${this._num(length)})` : "bit";
     }
 
     binary(length) {
-        return length ? `varbinary(${this._num(length)})` : 'blob';
+        return length ? `varbinary(${this._num(length)})` : "blob";
     }
 
     json() {
-        return 'json';
+        return "String";
     }
 
     jsonb() {
-        return 'json';
+        return "String";
     }
 
     // Modifiers
@@ -64,30 +62,29 @@ class ColumnCompilerClickHouse extends ColumnCompiler {
 
     defaultTo(value) {
         if (value === null || value === undefined) {
-            return '';
+            return "";
         }
         if (value instanceof Raw) {
             value = value.toQuery();
-        } else if (this.type === 'bool' || this.type === 'UInt8') {
-            if (value === 'false')
-                value = 0;
+        } else if (this.type === "bool" || this.type === "UInt8") {
+            if (value === "false") value = 0;
             value = value ? 1 : 0;
         } else {
             value = this.client._escapeBinding(value.toString());
         }
-        return 'default ' + value;
+        return "default " + value;
     }
 
     unsigned() {
-        return '';
+        return "";
     }
 
     comment() {
-        return '';
+        return "";
     }
 
     first() {
-        return '';
+        return "";
     }
 
     after(column) {
