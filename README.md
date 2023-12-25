@@ -39,26 +39,26 @@ Currently the migration default enging is MergeTree. If you want to use other en
 MergeTree
 
 -   [x] MergeTree
--   [] ReplacingMergeTree,
--   [] SummingMergeTree
--   [] AggregatingMergeTree
--   [] VersionedCollapsingMergeTree
--   [] CollapsingMergeTree
+-   [ ] ReplacingMergeTree,
+-   [ ] SummingMergeTree
+-   [ ] AggregatingMergeTree
+-   [ ] VersionedCollapsingMergeTree
+-   [ ] CollapsingMergeTree
 
 Log
 
--   [] TinyLog
--   [] StripeLog
--   [] Log
+-   [ ] TinyLog
+-   [ ] StripeLog
+-   [ ] Log
 
 Others Enging
 
--   [] Memory
--   [] Distributed
--   [] View, MaterializedView
--   [] Dictionary
--   [] File, URL
--   [] Buffer
--   [] Kafka, RabbitMQ
--   [] ODBC, JDBC, MySQL, PostgreSQL, HDFS
+-   [ ] Memory
+-   [ ] Distributed
+-   [ ] View, MaterializedView
+-   [ ] Dictionary
+-   [ ] File, URL
+-   [ ] Buffer
+-   [ ] Kafka, RabbitMQ
+-   [ ] ODBC, JDBC, MySQL, PostgreSQL, HDFS
 
