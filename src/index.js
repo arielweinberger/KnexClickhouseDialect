@@ -100,8 +100,9 @@ class ClientClickhouse extends Client {
         }
         if (_.isString(config)) {
             const url = new URL(config);
+
             config = {
-                url: url.hostname,
+                url: `${url.protocol}//${url.hostname}`,
                 port: url.port ? url.port : 8123,
                 user: url.username,
                 password: url.password,

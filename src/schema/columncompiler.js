@@ -6,9 +6,9 @@ const Raw = require("knex/lib/raw");
 class ColumnCompilerClickHouse extends ColumnCompiler {
     modifiers = ["defaultTo"];
 
-    increments = "UUID DEFAULT UUIDStringToNum('generateUUIDv4()')";
+    increments = "UUID DEFAULT generateUUIDv4()";
 
-    bigincrements = "UUID DEFAULT UUIDStringToNum('generateUUIDv4()')";
+    bigincrements = "UUID DEFAULT generateUUIDv4()";
 
     smallint = "Int8";
 
